@@ -1,0 +1,50 @@
+[
+    {
+      "name": "Maybank 2 Cards",
+      "bank": "Maybank",
+      "benefits": "5% cashback on dining and groceries, 0.2% on other spend",
+      "bestFor": "dining, groceries",
+      "annualFee": "RM0 first year",
+      "minIncome": "RM30,000"
+    },
+    {
+      "name": "CIMB Cash Rebate Platinum",
+      "bank": "CIMB",
+      "benefits": "10% cashback on petrol, groceries, and utilities. 0.2% on others",
+      "bestFor": "petrol, groceries, utilities",
+      "annualFee": "RM0 forever",
+      "minIncome": "RM24,000"
+    },
+    {
+      "name": "RHB Visa Signature",
+      "bank": "RHB",
+      "benefits": "5% cashback on online shopping, 2% on dining",
+      "bestFor": "online shopping, dining",
+      "annualFee": "RM0 first year",
+      "minIncome": "RM24,000"
+    },
+    {
+      "name": "CIMB Travel Platinum",
+      "bank": "CIMB",
+      "benefits": "2x TravelPoints on overseas spend, 2 free airport lounge visits per year",
+      "bestFor": "travel, overseas spending",
+      "annualFee": "RM120",
+      "minIncome": "RM36,000"
+    },
+    {
+      "name": "Maybank 2 Gold Cards",
+      "bank": "Maybank",
+      "benefits": "5x TreatsPoints on overseas spend, 2x on local spend",
+      "bestFor": "travel, overseas spending",
+      "annualFee": "RM0 first year",
+      "minIncome": "RM30,000"
+    },
+    {
+      "name": "Hong Leong Wise Card",
+      "bank": "Hong Leong",
+      "benefits": "8% cashback on top 3 spend categories each month, auto-adapts",
+      "bestFor": "flexible, adapts to your highest spending categories",
+      "annualFee": "RM0 forever",
+      "minIncome": "RM24,000"
+    }
+  ]
