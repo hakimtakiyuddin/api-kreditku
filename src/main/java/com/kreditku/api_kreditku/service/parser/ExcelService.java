@@ -1,4 +1,4 @@
-package com.kreditku.api_kreditku.service;
+package com.kreditku.api_kreditku.service.parser;
 
 import java.io.BufferedReader;
 import java.io.IOException;

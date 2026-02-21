@@ -16,9 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.kreditku.api_kreditku.model.CreditCard;
 import com.kreditku.api_kreditku.model.RecommendationResponse;
-import com.kreditku.api_kreditku.service.CardKnowledgeService;
-import com.kreditku.api_kreditku.service.ExcelService;
-import com.kreditku.api_kreditku.service.LlmService;
+import com.kreditku.api_kreditku.service.knowledge.CardKnowledgeService;
+import com.kreditku.api_kreditku.service.llm.LlmService;
+import com.kreditku.api_kreditku.service.parser.ExcelService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;

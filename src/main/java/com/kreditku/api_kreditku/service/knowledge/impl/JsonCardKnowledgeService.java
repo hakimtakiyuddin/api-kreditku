@@ -1,4 +1,4 @@
-package com.kreditku.api_kreditku.service;
+package com.kreditku.api_kreditku.service.knowledge.impl;
 
 import java.io.IOException;
 import java.util.List;
@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.kreditku.api_kreditku.model.CreditCard;
+import com.kreditku.api_kreditku.service.knowledge.CardKnowledgeService;
 
 import jakarta.annotation.PostConstruct;
 

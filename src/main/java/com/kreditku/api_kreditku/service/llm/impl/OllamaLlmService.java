@@ -1,4 +1,4 @@
-package com.kreditku.api_kreditku.service;
+package com.kreditku.api_kreditku.service.llm.impl;
 
 import java.util.List;
 import java.util.Map;
@@ -9,6 +9,9 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import com.kreditku.api_kreditku.service.knowledge.CardKnowledgeService;
+import com.kreditku.api_kreditku.service.llm.LlmService;
 
 import jakarta.annotation.PostConstruct;
 
