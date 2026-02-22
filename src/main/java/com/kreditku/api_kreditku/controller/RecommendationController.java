@@ -4,21 +4,24 @@ import java.util.List;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.kreditku.api_kreditku.exception.RateLimitExceededException;
 import com.kreditku.api_kreditku.model.CreditCard;
-import com.kreditku.api_kreditku.model.RecommendationResponse;
+import com.kreditku.api_kreditku.model.dto.ChatResponse;
+import com.kreditku.api_kreditku.service.chat.ChatService;
 import com.kreditku.api_kreditku.service.knowledge.CardKnowledgeService;
 import com.kreditku.api_kreditku.service.llm.LlmService;
-import com.kreditku.api_kreditku.service.parser.ExcelService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -29,57 +32,65 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class RecommendationController {
 
     @Autowired
-    private ExcelService excelService;
+    private ChatService chatService;
 
     @Autowired
-    private LlmService llmService; // ← interface, not a specific impl
+    private LlmService llmService;
 
     @Autowired
     private CardKnowledgeService cardKnowledgeService;
 
     @Operation(summary = "Upload expense file and get card recommendation")
     @PostMapping(value = "/recommend", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<RecommendationResponse> recommend(
-            @RequestParam("file") MultipartFile file) {
+    public ResponseEntity<ChatResponse> recommend(
+            @RequestParam("file") MultipartFile file,
+            @RequestHeader(value = "X-User-Id", required = false) String userId) {
+
+        // Generate anonymous user ID if not provided
+        if (userId == null || userId.isBlank()) {
+            userId = "anonymous-" + System.currentTimeMillis();
+        }
+
         try {
-            Map<String, Double> expenses = excelService.parseExpenses(file);
-
-            if (expenses.isEmpty()) {
-                return ResponseEntity.badRequest()
-                        .body(new RecommendationResponse("No expense data found in file.", false));
-            }
-
-            String expensesText = excelService.formatExpensesAsText(expenses);
-            String recommendation = llmService.getRecommendation(expensesText);
-
-            if (recommendation.startsWith("Error")) {
-                return ResponseEntity.badRequest()
-                        .body(new RecommendationResponse(recommendation, false));
-            }
-
-            return ResponseEntity.ok(
-                    new RecommendationResponse(recommendation, llmService.getProviderName()));
-
+            ChatResponse response = chatService.sendMessage(userId, null, file);
+            return ResponseEntity.ok(response);
+        } catch (RateLimitExceededException e) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(new ChatResponse(e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.badRequest()
-                    .body(new RecommendationResponse("Failed to process file: " + e.getMessage(), false));
+                    .body(new ChatResponse("Failed to process file: " + e.getMessage()));
         }
     }
 
     @Operation(summary = "Ask a question about credit cards")
     @PostMapping("/chat")
-    public ResponseEntity<RecommendationResponse> chat(
-            @RequestBody Map<String, String> body) {
+    public ResponseEntity<ChatResponse> chat(
+            @RequestBody Map<String, String> body,
+            @RequestHeader(value = "X-User-Id", required = false) String userId) {
+
         String message = body.get("message");
 
         if (message == null || message.isBlank()) {
             return ResponseEntity.badRequest()
-                    .body(new RecommendationResponse("Message cannot be empty.", false));
+                    .body(new ChatResponse("Message cannot be empty."));
         }
 
-        String response = llmService.chat(message);
-        return ResponseEntity.ok(
-                new RecommendationResponse(response, llmService.getProviderName()));
+        // Generate anonymous user ID if not provided
+        if (userId == null || userId.isBlank()) {
+            userId = "anonymous-" + System.currentTimeMillis();
+        }
+
+        try {
+            ChatResponse response = chatService.sendMessage(userId, message, null);
+            return ResponseEntity.ok(response);
+        } catch (RateLimitExceededException e) {
+            return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                    .body(new ChatResponse(e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest()
+                    .body(new ChatResponse("Error: " + e.getMessage()));
+        }
     }
 
     @Operation(summary = "Get all available credit cards")
